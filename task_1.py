@@ -1,34 +1,24 @@
-import pathlib
+def caching_fibonacci():
+    cache = {}
 
-current_dir = pathlib.Path(__file__).parent
+    def fibonacci(n):
+        if n <= 0:
+            return 0
+
+        if n == 1:
+            return 1
+
+        if n in cache:
+            return cache[n]
+
+        cache[n] = fibonacci(n - 1) + fibonacci(n - 2)
+        return cache[n]
+
+    return fibonacci
 
 
-def total_salary(path):
-    try:
-        with open(path, 'r', encoding='utf-8') as file:
-            salaries = []
-            for line in file:
-                name, salary = line.strip().split(',')
-                salaries.append(float(salary))
+fib = caching_fibonacci()
 
-        if not salaries:
-            return (0, 0)
-
-        total = sum(salaries)
-        average = total / len(salaries)
-        return (total, average)
-
-    except FileNotFoundError:
-        print(f"Файл за шляхом {path} не знайдено.")
-        return (0, 0)
-    except Exception as e:
-        print(f"Сталася помилка: {e}")
-        return (0, 0)
-
-def main():
-    path_to_file = current_dir / "salary_file.txt"
-    total, average = total_salary(path_to_file)
-    print(f"Загальна сума заробітної плати: {total}, Середня заробітна плата: {average}")
-
-if __name__ == "__main__":
-    main()
+print(fib(10))  # Output 55
+print(fib(15))  # Output 610
+print(fib(50))  # Output 12586269025
