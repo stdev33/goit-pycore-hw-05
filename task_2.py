@@ -1,29 +1,17 @@
-import pathlib
-
-current_dir = pathlib.Path(__file__).parent
-
-
-def get_cats_info(path):
-    try:
-        with open(path, 'r', encoding='utf-8') as file:
-            cats_info = []
-            for line in file:
-                cat_id, name, age = line.strip().split(',')
-                cats_info.append({"id": cat_id, "name": name, "age": age})
-        return cats_info
-    except FileNotFoundError:
-        print(f"Файл за шляхом {path} не знайдено.")
-        return []
-    except Exception as e:
-        print(f"Сталася помилка: {e}")
-        return []
+import re
+from typing import Callable, Generator
 
 
-def main():
-    path_to_file = current_dir / "cats_file.txt"
-    cats_info = get_cats_info(path_to_file)
-    print(cats_info)
+def generator_numbers(text: str) -> Generator[float, None, None]:
+    pattern = r'\b\d+\.\d+\b'
+    for match in re.finditer(pattern, text):
+        yield float(match.group())
 
 
-if __name__ == "__main__":
-    main()
+def sum_profit(text: str, func: Callable[[str], Generator[float, None, None]]) -> float:
+    return sum(func(text))
+
+
+text = "Загальний дохід працівника складається з декількох частин: 1000.01 як основний дохід, доповнений додатковими надходженнями 27.45 і 324.00 доларів."
+total_income = sum_profit(text, generator_numbers)
+print(f"Загальний дохід: {total_income}")
